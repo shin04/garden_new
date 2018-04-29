@@ -9,5 +9,6 @@
 #ifndef garden_new_Bridging_Header_h
 #define garden_new_Bridging_Header_h
 
+#import "NCMB/NCMB.h"
 
 #endif /* garden_new_Bridging_Header_h */

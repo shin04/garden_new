@@ -7,13 +7,51 @@
 //
 
 import UIKit
+import Eureka
 
-class harvestViewController: UIViewController {
+class harvestViewController: FormViewController, UINavigationControllerDelegate {
+    
+    var objectId : String!
+    var harvestDate: NSDate!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+        navigationController?.delegate = self
+        
+        form +++ Section("when you harvest your plant?")
+            <<< DatePickerRow() {
+                //$0.value = harvestDate.addingTimeInterval(60*60*24) as Date?
+                $0.value = harvestDate as Date?
+                }.onChange { row in
+                    print(row.value!)
+                    self.harvestDate = row.value! as NSDate
+        }
+            <<< ButtonRow() {
+                $0.title = "save"
+                }.onCellSelection{ cell, row in
+                    let object = NCMBObject(className: "FarmsData")
+                    object?.objectId = self.objectId
+                    object?.setObject(self.harvestDate, forKey: "harvestDate")
+                    object?.saveInBackground({(error) in
+                        if error != nil {
+                            print("saveData error : \(error!)")
+                        } else {
+                            let a = self.navigationController?.viewControllers.count
+                            let segue = self.navigationController?.viewControllers[a! - 2] as! farmViewController
+                            segue.harvestDate = self.harvestDate
+                            print("success : \(self.harvestDate)")
+                            self.navigationController?.popViewController(animated: true)
+                        }
+                    })
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        //navi透過
+        self.navigationController!.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        self.navigationController!.navigationBar.shadowImage = UIImage()
+        
+        self.navigationController?.title = "harvest time"
     }
 
     override func didReceiveMemoryWarning() {
@@ -21,15 +59,4 @@ class harvestViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

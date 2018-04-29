@@ -22,7 +22,16 @@ class CustomCell: UITableViewCell {
     }
     
     func setCell(farm: Farm) {
-        
+        let imageFile = NCMBFile.file(withName: farm.imageName, data: nil) as! NCMBFile
+        imageFile.getDataInBackground({(imageData, error) -> Void in
+            if error != nil {
+                print("setCell error : \(error!)")
+            } else {
+                let image = UIImage(data: imageData!)
+                self.farmImage.image = image
+                self.farmName.text = farm.farmName
+            }
+        })
     }
 }
 
@@ -39,7 +48,8 @@ class CustomCell2: UITableViewCell {
     }
     
     func setCell(water: Water) {
-        
+        self.waterSwitch.isOn = water.waterState
+        self.nameLabel.text = water.farmName
     }
     
     @IBAction func switchAction(sender: RAMPaperSwitch) {
