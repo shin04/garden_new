@@ -21,6 +21,9 @@ class contentViewController: UIViewController, UITableViewDelegate, UITableViewD
     var imageNames: [String] = []
     var comments: [String] = []
     var createDate: [NSDate] = []
+    //追加
+    var comment_save: String!
+    var objectId_save: String!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -68,8 +71,11 @@ class contentViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         cellNumber = indexPath.row
+        //追加
+        objectId_save = objectIds[indexPath.row]
         
         diaryView = UIView(frame: CGRect(x:self.view.frame.width / 2 - 150, y:50, width:300, height:400))
+        diaryView.backgroundColor = UIColor(red:0.318, green:1.00, blue:0.702, alpha:0.5)
         
         let imageView = UIImageView(frame: CGRect(x:25, y:10, width:250, height:200))
         self.loadFile(imageName: imageNames[indexPath.row], imageView: imageView)
@@ -78,18 +84,30 @@ class contentViewController: UIViewController, UITableViewDelegate, UITableViewD
         comment.text = comments[indexPath.row]
         comment.textColor = UIColor.black
         comment.delegate = self as? UITextFieldDelegate
+        //追加
+        comment.addTarget(self, action: #selector(contentViewController.textAc(sender:)), for: .editingDidEndOnExit)
         
-        let closeBtn = UIButton(frame: CGRect(x:50, y:270, width:200, height:40))
-        //closeBtn.frame = CGRectMake(50, 220, 200, 40)
+        
+        let closeBtn = UIButton(frame: CGRect(x:50, y:320, width:200, height:40))
         closeBtn.setTitle("閉じる", for: [])
         closeBtn.setTitleColor(UIColor(red: 0.318, green: 1.00, blue: 0.702, alpha: 1), for: [])
         closeBtn.backgroundColor = UIColor(red: 0.216, green: 0.800, blue: 0.710, alpha: 1)
         closeBtn.layer.cornerRadius = 18
         closeBtn.addTarget(self, action: #selector(contentViewController.closeAc(sender:)), for: .touchUpInside)
         
+        //追加
+        let saveBtn = UIButton(frame: CGRect(x:50, y:270, width:200, height:40))
+        saveBtn.setTitle("保存", for: [])
+        saveBtn.setTitleColor(UIColor(red: 0.318, green: 1.00, blue: 0.702, alpha: 1), for: [])
+        saveBtn.backgroundColor = UIColor(red: 0.216, green: 0.800, blue: 0.710, alpha: 1)
+        saveBtn.layer.cornerRadius = 18
+        saveBtn.addTarget(self, action: #selector(contentViewController.saveAc(sender:)), for: .touchUpInside)
+        
         diaryView.addSubview(imageView)
         diaryView.addSubview(comment)
         diaryView.addSubview(closeBtn)
+        //追加
+        diaryView.addSubview(saveBtn)
         self.view.addSubview(diaryView)
     }
     
@@ -137,7 +155,8 @@ class contentViewController: UIViewController, UITableViewDelegate, UITableViewD
                         self.objectIds.append((object as AnyObject).object(forKey: "objectId") as! String)
                         self.imageNames.append((object as AnyObject).object(forKey: "imageName") as! String)
                         self.comments.append((object as AnyObject).object(forKey: "comment") as! String)
-                        self.createDate.append((object as AnyObject).object(forKey: "createDate") as! NSDate)
+                        self.createDate.append((object as AnyObject).createDate!! as NSDate)
+                        //self.createDate.append((object as AnyObject).object(forKey: "createDate") as! NSDate)
                     }
                 }
                 self.tableView.reloadData()
@@ -213,6 +232,17 @@ class contentViewController: UIViewController, UITableViewDelegate, UITableViewD
         diaryView.removeFromSuperview()
     }
     
+    //追加
+    @IBAction func saveAc(sender: UIButton) {
+        self.saveData(objectId: objectId_save, saveObject: comment_save as AnyObject, key: "comment")
+        diaryView.removeFromSuperview()
+    }
+    
+    //追加
+    @IBAction func textAc(sender: UITextField) {
+        comment_save = sender.text
+    }
+    
     @IBAction func newDiary() {
         let alert : UIAlertController = UIAlertController(title: "Diary", message: "make new diary", preferredStyle: UIAlertControllerStyle.alert)
         let takeAction : UIAlertAction = UIAlertAction(title: "Take a photo", style: .default, handler:{
@@ -223,8 +253,32 @@ class contentViewController: UIViewController, UITableViewDelegate, UITableViewD
             (action:UIAlertAction!) -> Void in
             self.selectImage()
         })
+        
+        //確認用 あとで消す
+        let hogehoge : UIAlertAction = UIAlertAction(title: "hogehoge", style: .default, handler:{
+            (action:UIAlertAction!) -> Void in
+            let object = NCMBObject(className: "DiaryData")
+            object?.setObject(NCMBUser.current().userName!, forKey: "createdBy")
+            object?.setObject(self.farmName, forKey: "farmName")
+            object?.setObject("コメント", forKey: "comment")
+            object?.setObject("image", forKey: "imageName")
+            object?.saveInBackground({(error) in
+                if error != nil {
+                    print("contentView imagepiker error : \(error!)")
+                } else {
+                    self.objectIds.append((object as AnyObject).objectId)
+                    self.createDate.append((object as AnyObject).createDate!! as NSDate)
+                    self.imageNames.append("futaba.png")
+                    self.comments.append("コメント")
+                    self.saveData(objectId: object!.objectId, saveObject: "futaba.png" as AnyObject, key: "imageName")
+                    self.tableView.reloadData()
+                }
+            })
+        })
+        
         alert.addAction(takeAction)
         alert.addAction(selectAction)
+        alert.addAction(hogehoge)
         present(alert, animated: true, completion: nil)
     }
 
