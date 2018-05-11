@@ -13,7 +13,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     
-    var waterDate: NSDate?
+    var objectId: String!
+    var waterDate: NSDate!
+    var notice: Bool!
 
     let ncmb_applicationkey = "c231f959d5ce81ab5e5cd4588fbf9e0a67fd8b3fbd61b1d85b4ee8ea4b5ee446"
     let ncmb_clientkey = "ad58ac82aac74919e928dcc31fac4bf453e5e7067e59b49e4c0a9cc36a6c122b"
@@ -21,6 +23,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         
         NCMB.setApplicationKey(ncmb_applicationkey, clientKey: ncmb_clientkey)
+        
+        self.loadWaterData()
         
         return true
     }
@@ -47,6 +51,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
+    //waterdateクラスだけここで読み込む
+    func loadWaterData() {
+        let query = NCMBQuery(className: "WaterData")
+        query?.whereKey("createdBy", equalTo: NCMBUser.current().userName!)
+        query?.findObjectsInBackground({(objects, error) in
+            if error != nil {
+                print("setting error : \(error!)")
+            } else {
+                if objects!.count > 0 {
+                    for object in objects! {
+                        self.objectId = (object as AnyObject).objectId
+                        self.waterDate = (object as AnyObject).object(forKey: "waterDate") as? NSDate
+                        self.notice = (object as AnyObject).object(forKey: "notice") as? Bool
+                    }
+                }
+            }
+        })
+    }
 
 }
 

@@ -17,42 +17,36 @@ class settingViewController: FormViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        var appDelegate:AppDelegate = UIApplication.shared.delegate as! AppDelegate
+        self.objectId = appDelegate.objectId
+        self.waterDate = appDelegate.waterDate
+        self.notice = appDelegate.notice
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        let query = NCMBQuery(className: "WaterData")
-        query?.whereKey("createdBy", equalTo: NCMBUser.current().userName!)
-        query?.findObjectsInBackground({(objects, error) in
-            if error != nil {
-                print("setting error : \(error!)")
-            } else {
-                if objects!.count > 0 {
-                    for object in objects! {
-                        self.objectId = (object as AnyObject).objectId
-                        self.waterDate = (object as AnyObject).object(forKey: "waterDate") as? NSDate
-                        self.notice = (object as AnyObject).object(forKey: "notice") as? Bool
-                    }
-                }
+        form +++ Section("通知の設定")
+            <<< SwitchRow("switch") {
+                $0.title = "水やりの時間を通知"
+                $0.value = self.notice
+                }.onChange { row in
+                    self.notice = row.value
             }
-            
-            self.form +++ Section("通知の設定")
-                <<< SwitchRow("switch"){
-                    $0.title = "水やりの時間を通知"
-                    $0.value = self.notice
-                    }.onChange { row in
-                        self.notice = row.value
-                }
-                <<< TimeRow() {
-                    $0.hidden = Condition.function(["switch"], { form in
-                        return !((form.rowBy(tag: "switch") as? SwitchRow)?.value ?? false)
-                    })
-                    $0.title = "水やりの時間"
-                    $0.value = self.waterDate as Date?
-                    }.onChange { row in
-                        self.waterDate = row.value! as NSDate
-                        self.saveData()
+            <<< TimeRow() {
+                //スイッチ押したら出るようにしたいけどできない
+                //                $0.hidden = Condition.function(["switch"], { form in
+                //                    return !((form.rowBy(tag: "switch") as? SwitchRow)?.value ?? false)
+                //                })
+                $0.title = "水やりの時間"
+                $0.value = self.waterDate as Date?
+                }.onChange { row in
+                    self.waterDate = row.value! as NSDate
             }
-        })
+            <<< ButtonRow() {
+                $0.title = "save"
+                }.onCellSelection{ cell, row in
+                    self.saveData()
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -73,6 +67,10 @@ class settingViewController: FormViewController {
                 print("setting savedata error : \(error!)")
             } else {
                 print("success")
+                let alert: UIAlertController = UIAlertController(title: "", message: "保存しました", preferredStyle: UIAlertControllerStyle.alert)
+                let defaultAction: UIAlertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler:nil)
+                alert.addAction(defaultAction)
+                self.present(alert, animated: true, completion: nil)
             }
         })
     }

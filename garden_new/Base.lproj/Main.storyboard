@@ -537,10 +537,10 @@
             </objects>
             <point key="canvasLocation" x="884" y="1525.1874062968518"/>
         </scene>
-        <!--Set View Controller-->
+        <!--Setting View Controller-->
         <scene sceneID="Dj4-x0-yoC">
             <objects>
-                <viewController storyboardIdentifier="setting" id="Gph-hK-gUK" customClass="setViewController" customModule="garden_new" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="setting" id="Gph-hK-gUK" customClass="settingViewController" customModule="garden_new" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="WNK-m3-7gy">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
