@@ -24,8 +24,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         NCMB.setApplicationKey(ncmb_applicationkey, clientKey: ncmb_clientkey)
         
-        self.loadWaterData()
-        
         return true
     }
 

@@ -18,7 +18,7 @@ class settingViewController: FormViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        var appDelegate:AppDelegate = UIApplication.shared.delegate as! AppDelegate
+        let appDelegate:AppDelegate = UIApplication.shared.delegate as! AppDelegate
         self.objectId = appDelegate.objectId
         self.waterDate = appDelegate.waterDate
         self.notice = appDelegate.notice

@@ -16,7 +16,6 @@ class mainViewController: UIViewController, UITableViewDelegate, UITableViewData
     var farms:[Farm] = [Farm]()
     var objectIds: [String] = []
     var createDates: [NSDate] = []
-    var harvestDates: [NSDate] = []
     var waterStates: [Bool] = []
     
     override func viewDidLoad() {
@@ -44,13 +43,14 @@ class mainViewController: UIViewController, UITableViewDelegate, UITableViewData
         objectIds.removeAll()
         waterStates.removeAll()
         createDates.removeAll()
-        harvestDates.removeAll()
         
         //NCMBUser.logOut()
-        
+
         if NCMBUser.current() != nil {
             print("Welcome to Your Gerden, \(NCMBUser.current().userName)!!")
             self.loadData()
+            let appDelegate:AppDelegate = UIApplication.shared.delegate as! AppDelegate
+            appDelegate.loadWaterData()
         } else {
             let segue : introViewController = self.storyboard?.instantiateViewController(withIdentifier: "intro") as! introViewController
             self.present(segue, animated:true, completion: nil)
@@ -88,7 +88,6 @@ class mainViewController: UIViewController, UITableViewDelegate, UITableViewData
         segue.objectId = objectIds[indexPath.row]
         segue.waterState = waterStates[indexPath.row]
         segue.createDate = createDates[indexPath.row]
-        segue.harvestDate = harvestDates[indexPath.row]
         self.navigationController?.pushViewController(segue, animated: true)
     }
     
@@ -107,7 +106,6 @@ class mainViewController: UIViewController, UITableViewDelegate, UITableViewData
                         self.objectIds.append((object as AnyObject).object(forKey: "objectId") as! String)
                         self.waterStates.append((object as AnyObject).object(forKey: "waterState") as! Bool)
                         self.createDates.append((object as AnyObject).createDate!! as NSDate)
-                        self.harvestDates.append((object as AnyObject).object(forKey: "harvestDate") as! NSDate)
                     }
                 }
             }
@@ -120,7 +118,6 @@ class mainViewController: UIViewController, UITableViewDelegate, UITableViewData
         object?.setObject("futaba.png", forKey: "farmImage")
         object?.setObject(NCMBUser.current().userName, forKey: "createdBy")
         object?.setObject(false, forKey: "waterState")
-        object?.setObject(Date(timeInterval: 60*60*24*7, since: Date()), forKey: "harvestDate")
         object?.setObject(0, forKey: "imageCount")
         object?.saveInBackground({(error) in
             if error != nil {
@@ -129,7 +126,6 @@ class mainViewController: UIViewController, UITableViewDelegate, UITableViewData
                 self.objectIds.append((object as AnyObject).objectId)
                 self.waterStates.append(((object as AnyObject).object(forKey: "waterState") != nil))
                 self.createDates.append((object as AnyObject).createDate!! as NSDate)
-                self.harvestDates.append((object as AnyObject).object(forKey: "harvestDate") as! NSDate)
             }
         })
     }

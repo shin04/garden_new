@@ -14,7 +14,6 @@ class farmViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     @IBOutlet var farmImageView: UIImageView!
     @IBOutlet var dataLabel: UILabel!
     @IBOutlet var waterSwitch: RAMPaperSwitch!
-    @IBOutlet var harvestBtn: UIButton!
     @IBOutlet var saveBtn: UIButton!
     @IBOutlet var deleteBtn: UIButton!
     
@@ -25,7 +24,6 @@ class farmViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     var objectId: String!
     var waterState: Bool!
     var createDate: NSDate!
-    var harvestDate: NSDate!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,7 +38,6 @@ class farmViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        print("viewWillAppear farm : \(self.harvestDate) やでー")
         //make navigationBar transparent
         self.navigationController!.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationController!.navigationBar.shadowImage = UIImage()
@@ -49,8 +46,6 @@ class farmViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         self.farmNameText.text = farmName
         self.setImage(imageFileName: imageName)
         dataLabel.text = "作成日：" + stringFromDate(date: createDate, format: "yyyy年MM月dd日")
-        harvestBtn.setTitle("収穫予定日：" + stringFromDate(date: harvestDate, format: "yyyy年MM月dd日" + "頃"), for: .normal)
-        harvestBtn.setTitleColor(UIColor.black, for: .normal)
         if waterState == true {
             waterSwitch.isOn = true
         } else {
@@ -141,7 +136,7 @@ class farmViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         }
     }
     
-    func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
+    private func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
         if info[UIImagePickerControllerOriginalImage] != nil {
             let size = CGSize(width: 250, height: 200)
             UIGraphicsBeginImageContext(size)
@@ -181,13 +176,6 @@ class farmViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         }
         
         self.saveData(saveObject: waterState as AnyObject, key: "waterState")
-    }
-    
-    @IBAction func showHarvestDate() {
-        let segue = self.storyboard?.instantiateViewController(withIdentifier: "harvest") as! harvestViewController
-        segue.objectId = self.objectId
-        segue.harvestDate = self.harvestDate
-        self.navigationController?.pushViewController(segue, animated: true)
     }
  
     @IBAction func plantCondition() {
