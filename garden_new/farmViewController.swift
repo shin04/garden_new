@@ -155,7 +155,7 @@ class farmViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         let reSize = CGSize(width: 250, height: 250)
         self.saveFile(fileData: image.reSizeImage(reSize: reSize))
         
-        picker.dismiss(animated: true, completion: nil)
+        picker.dismiss(animated: true, completion: nil )
     }
     
     @IBAction func saveDataAction() {
