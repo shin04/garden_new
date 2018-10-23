@@ -136,18 +136,24 @@ class farmViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
         }
     }
     
-    private func imagePickerController(picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : AnyObject]) {
-        if info[UIImagePickerControllerOriginalImage] != nil {
-            let size = CGSize(width: 250, height: 200)
-            UIGraphicsBeginImageContext(size)
-            info[UIImagePickerControllerOriginalImage]!.draw(CGRect(x:0, y:0, width:size.width, height:size.height))
-            let resizeImage = UIGraphicsGetImageFromCurrentImageContext()
-            
-            self.saveFile(fileData: resizeImage!)
-        }
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
+//        if info[UIImagePickerControllerOriginalImage] != nil {
+//            let size = CGSize(width: 250, height: 200)
+//            UIGraphicsBeginImageContext(size)
+//            info[UIImagePickerControllerOriginalImage]!.draw(CGRect(x:0, y:0, width:size.width, height:size.height))
+//            let resizeImage = UIGraphicsGetImageFromCurrentImageContext()
+//
+//            self.saveFile(fileData: resizeImage!)
+//        }
+//
+//        //save photo in cameraroll
+//        UIImageWriteToSavedPhotosAlbum(info[UIImagePickerControllerOriginalImage] as! UIImage, self, nil, nil)
+//
+//        picker.dismiss(animated: true, completion: nil)
         
-        //save photo in cameraroll
-        UIImageWriteToSavedPhotosAlbum(info[UIImagePickerControllerOriginalImage] as! UIImage, self, nil, nil)
+        let image = info[UIImagePickerControllerOriginalImage] as! UIImage
+        let reSize = CGSize(width: 250, height: 250)
+        self.saveFile(fileData: image.reSizeImage(reSize: reSize))
         
         picker.dismiss(animated: true, completion: nil)
     }
@@ -191,10 +197,30 @@ class farmViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
             segue.objectId = self.objectId
             self.navigationController?.pushViewController(segue, animated: true)
         })
+        let button_4 : UIAlertAction = UIAlertAction(title: "Close", style: .default, handler: nil)
         alert.addAction(button_1)
         alert.addAction(button_2)
         alert.addAction(button_3)
+        alert.addAction(button_4)
         present(alert, animated: true, completion: nil)
     }
     
+}
+
+extension UIImage {
+    // resize image
+    func reSizeImage(reSize:CGSize)->UIImage {
+        //UIGraphicsBeginImageContext(reSize);
+        UIGraphicsBeginImageContextWithOptions(reSize,false,UIScreen.main.scale);
+        self.draw(in: CGRect(x: 0, y: 0, width: reSize.width, height: reSize.height));
+        let reSizeImage:UIImage! = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        return reSizeImage;
+    }
+    
+    // scale the image at rates
+    func scaleImage(scaleSize:CGFloat)->UIImage {
+        let reSize = CGSize(width: self.size.width * scaleSize, height: self.size.height * scaleSize)
+        return reSizeImage(reSize: reSize)
+    }
 }

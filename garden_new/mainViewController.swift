@@ -47,7 +47,7 @@ class mainViewController: UIViewController, UITableViewDelegate, UITableViewData
         //NCMBUser.logOut()
 
         if NCMBUser.current() != nil {
-            print("Welcome to Your Gerden, \(NCMBUser.current().userName)!!")
+            print("Welcome to Your Gerden, \(String(describing: NCMBUser.current().userName))!!")
             self.loadData()
             let appDelegate:AppDelegate = UIApplication.shared.delegate as! AppDelegate
             appDelegate.loadWaterData()
@@ -102,7 +102,7 @@ class mainViewController: UIViewController, UITableViewDelegate, UITableViewData
                 let object_count : Int = (objects?.count)!
                 if object_count > 0 {
                     for object in objects! {
-                        self.makeFarm(farmName: (object as AnyObject).object(forKey: "farmName") as! String, farmImage: (object as AnyObject).object(forKey: "farmImage") as! String)
+                        self.makeFarm(farmName: (object as AnyObject).object(forKey: "farmName") as? String, farmImage: (object as AnyObject).object(forKey: "farmImage") as! String)
                         self.objectIds.append((object as AnyObject).object(forKey: "objectId") as! String)
                         self.waterStates.append((object as AnyObject).object(forKey: "waterState") as! Bool)
                         self.createDates.append((object as AnyObject).createDate!! as NSDate)

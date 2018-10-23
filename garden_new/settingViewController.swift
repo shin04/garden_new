@@ -46,6 +46,8 @@ class settingViewController: FormViewController {
                 $0.title = "save"
                 }.onCellSelection{ cell, row in
                     self.saveData()
+                    let appDelegate: AppDelegate = UIApplication.shared.delegate as! AppDelegate
+                    appDelegate.waterDate = self.waterDate
         }
     }
 
