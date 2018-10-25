@@ -74,9 +74,6 @@ class mainViewController: UIViewController, UITableViewDelegate, UITableViewData
         let cell : CustomCell = tableView.dequeueReusableCell(withIdentifier: "CustomCell", for: indexPath) as! CustomCell
         cell.setCell(farm: farms[indexPath.row])
         
-        cell.backgroundColor = UIColor.clear
-        cell.contentView.backgroundColor = UIColor.clear
-        
         return cell
     }
     
@@ -102,7 +99,7 @@ class mainViewController: UIViewController, UITableViewDelegate, UITableViewData
                 let object_count : Int = (objects?.count)!
                 if object_count > 0 {
                     for object in objects! {
-                        self.makeFarm(farmName: (object as AnyObject).object(forKey: "farmName") as? String, farmImage: (object as AnyObject).object(forKey: "farmImage") as! String)
+                        self.makeFarm(farmName: (object as AnyObject).object(forKey: "farmName") as? String, farmImage: (object as AnyObject).object(forKey: "farmImage") as? String)
                         self.objectIds.append((object as AnyObject).object(forKey: "objectId") as! String)
                         self.waterStates.append((object as AnyObject).object(forKey: "waterState") as! Bool)
                         self.createDates.append((object as AnyObject).createDate!! as NSDate)

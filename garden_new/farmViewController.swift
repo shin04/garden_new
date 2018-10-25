@@ -159,19 +159,37 @@ class farmViewController: UIViewController, UITextFieldDelegate, UIImagePickerCo
     }
     
     @IBAction func saveDataAction() {
-        self.saveData(saveObject: farmName as AnyObject, key: "farmName")
+        let alert: UIAlertController = UIAlertController(title: "確認", message: "保存してええ？", preferredStyle: .alert)
+        let defaultAc: UIAlertAction = UIAlertAction(title: "ええで", style: .default, handler:{
+            (action: UIAlertAction!) -> Void in
+            self.saveData(saveObject: self.farmName as AnyObject, key: "farmName")
+        })
+        let cancelAc: UIAlertAction = UIAlertAction(title: "あかん", style: .cancel, handler: nil)
+        alert.addAction(defaultAc)
+        alert.addAction(cancelAc)
+        
+        present(alert, animated: true, completion: nil)
     }
     
     @IBAction func deleteDataAction() {
-        let object = NCMBObject(className: "FarmsData")
-        object?.objectId = objectId
-        object?.deleteInBackground({(error) in
-            if error != nil {
-                print("deleteDataAction error : \(error!)")
-            } else {
-                self.navigationController?.popToRootViewController(animated: true)
-            }
+        let alert: UIAlertController = UIAlertController(title: "確認", message: "保存してええ？", preferredStyle: .alert)
+        let defaultAc: UIAlertAction = UIAlertAction(title: "ええで", style: .default, handler:{
+            (action: UIAlertAction!) -> Void in
+            let object = NCMBObject(className: "FarmsData")
+            object?.objectId = self.objectId
+            object?.deleteInBackground({(error) in
+                if error != nil {
+                    print("deleteDataAction error : \(error!)")
+                } else {
+                    self.navigationController?.popToRootViewController(animated: true)
+                }
+            })
         })
+        let cancelAc: UIAlertAction = UIAlertAction(title: "あかん", style: .cancel, handler: nil)
+        alert.addAction(defaultAc)
+        alert.addAction(cancelAc)
+        
+        present(alert, animated: true, completion: nil)
     }
     
     @IBAction func waterSwitchAction(sender: RAMPaperSwitch) {

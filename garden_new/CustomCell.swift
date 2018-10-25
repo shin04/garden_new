@@ -19,6 +19,15 @@ class CustomCell: UITableViewCell {
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
+        
+        //backgroundColor = UIColor.init(red: 82/255, green: 255/255, blue: 179/255, alpha: 1)
+        selectedBackgroundView = makeSelectedBackgroundView()
+    }
+    
+    private func makeSelectedBackgroundView() -> UIView {
+        let view = UIView()
+        view.backgroundColor = UIColor.init(red: 82/255, green: 255/255, blue: 179/255, alpha: 0.5)
+        return view
     }
     
     func setCell(farm: Farm) {
